@@ -45,4 +45,9 @@ public class ImageController {
         map.put("uuid_name", imageService.uploadImage(file));
         return new ResponseDto(map);
     }
+
+    @DeleteMapping("/image/user/{originName}")
+    public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
+        return new ResponseDto<Boolean>(imageService.deleteImage(originName));
+    }
 }

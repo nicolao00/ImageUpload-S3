@@ -2,6 +2,8 @@ package com.example.upload.service;
 
 //import com.example.upload.config.S3Config;
 import com.example.upload.domain.Image;
+import com.example.upload.domain.type.ErrorCode;
+import com.example.upload.exception.RestApiException;
 import com.example.upload.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +69,16 @@ public class ImageService {
                         .type(file.getContentType())
                         .build()
         );
-
         return uuidImageName;
+    }
+
+    @Transactional
+    public Boolean deleteImage(String originName) throws IOException {
+//        log.info("originName = {}", originName);
+        Image findImage = imageRepository.findByOriginName(originName).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+//        log.info("findImage {}", findImage.getOriginName());
+        imageRepository.delete(findImage);
+        return Boolean.TRUE;
     }
 }
 
