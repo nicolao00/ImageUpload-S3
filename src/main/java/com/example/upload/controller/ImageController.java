@@ -19,6 +19,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+        @RequestMapping("/image")
 public class ImageController {
     private final ImageService imageService;
 
@@ -39,14 +40,14 @@ public class ImageController {
 //                    .body(imageData);
 //    }
 
-    @PostMapping("/image/user")
+    @PostMapping("/user")
     public ResponseDto<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         Map<String, String> map = new HashMap<>();
         map.put("uuid_name", imageService.uploadImage(file));
         return new ResponseDto(map);
     }
 
-    @DeleteMapping("/image/user/{originName}")
+    @DeleteMapping("/user/{originName}")
     public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
         return new ResponseDto<Boolean>(imageService.deleteImage(originName));
     }
