@@ -1,12 +1,14 @@
 package com.example.upload.service;
 
 //import com.example.upload.config.S3Config;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.upload.domain.Image;
 import com.example.upload.domain.type.ErrorCode;
 import com.example.upload.exception.RestApiException;
 import com.example.upload.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Bag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +24,9 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ImageService {
     private final ImageRepository imageRepository;
-    //    private final S3Config s3Config;
     @Value("${spring.image.path}")
     private String FOLDER_PATH;
+
 
     @Transactional()
     public String uploadImage(MultipartFile file) throws IOException {
@@ -72,11 +74,21 @@ public class ImageService {
         return uuidImageName;
     }
 
-    @Transactional
-    public Boolean deleteImage(String originName) throws IOException {
-//        log.info("originName = {}", originName);
-        Image findImage = imageRepository.findByOriginName(originName).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-//        log.info("findImage {}", findImage.getOriginName());
+    @Transactional()
+    public Boolean deleteImage(String uuidName) {
+
+        // 파일 경로
+        String filePath = FOLDER_PATH + uuidName;
+
+        // 파일 삭제
+        File file = new File(filePath);
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new RestApiException(ErrorCode.NOT_FOUND);
+            }
+        }
+
+        Image findImage = imageRepository.findByOriginName(uuidName).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         imageRepository.delete(findImage);
         return Boolean.TRUE;
     }
