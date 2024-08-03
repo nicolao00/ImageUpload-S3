@@ -1,8 +1,10 @@
 package com.example.upload.controller;
 
+import com.example.upload.dto.response.ImageResponseDto;
 import com.example.upload.exception.ExceptionDto;
 import com.example.upload.exception.ResponseDto;
 import com.example.upload.service.ImageService;
+import com.example.upload.service.ImageServiceS3;
 import com.sun.nio.sctp.IllegalUnbindException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +16,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-        @RequestMapping("/image")
+@RequestMapping("/image")
 public class ImageController {
     private final ImageService imageService;
+    private final ImageServiceS3 imageServiceS3;
 
 //    @GetMapping("/image")
 //    public ResponseEntity<?> downloadImage(@RequestParam("uuid") String fileName) throws IOException {
@@ -40,15 +44,24 @@ public class ImageController {
 //                    .body(imageData);
 //    }
 
-    @PostMapping("/user")
-    public ResponseDto<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        map.put("uuid_name", imageService.uploadImage(file));
-        return new ResponseDto(map);
-    }
+    // 로컬 저장소에 사진 저장하는 로직
+//    @PostMapping("/user")
+//    public ResponseDto<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+//        Map<String, String> map = new HashMap<>();
+//        map.put("uuid_name", imageService.uploadImage(file));
+//        return new ResponseDto(map);
+//    }
 
-    @DeleteMapping("/user/{originName}")
-    public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
-        return new ResponseDto<Boolean>(imageService.deleteImage(originName));
+//    @DeleteMapping("/user/{originName}")
+//    public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
+//        return new ResponseDto<Boolean>(imageService.deleteImage(originName));
+//    }
+
+    // S3에 사진 저장하는 로직
+    @PostMapping("/user")
+    public ResponseDto<?> uploadImage(@RequestParam("image") List<MultipartFile> fileList, @RequestParam("user") String userName) throws IOException {
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("uuid_name", imageServiceS3.uploadImage(fileList, userName));
+        return new ResponseDto(map);
     }
 }
