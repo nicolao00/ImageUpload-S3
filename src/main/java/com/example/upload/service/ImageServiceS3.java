@@ -94,4 +94,18 @@ public class ImageServiceS3 {
         }
         return imageResponseDtos;
     }
+
+    /* 3. 파일 삭제 */
+    @Transactional()
+    public Boolean deleteImage (String uuidName) throws IOException {
+        Image findImage = imageRepository.findByUuidName(uuidName).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        imageRepository.delete(findImage);
+        try {
+            // deleteObject(버킷명, 키값)으로 객체 삭제
+            amazonS3.deleteObject(bucket, uuidName);
+        } catch (AmazonServiceException e) {
+            log.error(e.toString());
+        }
+        return Boolean.TRUE;
+    }
 }

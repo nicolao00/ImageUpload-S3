@@ -71,4 +71,9 @@ public class ImageController {
         map.put("path", imageServiceS3.getImageList(userName));
         return new ResponseDto<>(map);
     }
+
+    @DeleteMapping("/user/{uuidName}")
+    public ResponseDto<Boolean> deleteImage(@PathVariable String uuidName) throws IOException {
+        return new ResponseDto<Boolean>(imageServiceS3.deleteImage(uuidName));
+    }
 }
