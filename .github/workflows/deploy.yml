@@ -19,7 +19,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_Host }}
-          username: ${{ sercrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: | # 여러 명령어 쓸땐 이런식으로 쓰라고 공식문서에 나와있음 / 4번째 줄. 돌고 있는 8080 서버가 없으면 에러로 인식돼서 || true 추가
