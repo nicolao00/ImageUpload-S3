@@ -73,4 +73,25 @@ public class ImageServiceS3 {
         imageRepository.saveAll(imageList);
         return urlList;
     }
+
+    @Transactional
+    public List<ImageResponseDto> getImageList(String user) throws IOException {
+        List<Image> userImages = imageRepository.findAllByOwner(user).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        List<ImageResponseDto> imageResponseDtos = new ArrayList<>();
+
+        for (Image image : userImages) {
+            imageResponseDtos.add(
+                    ImageResponseDto.builder()
+                            .id(image.getId())
+                            .owner(image.getOwner())
+                            .originName(image.getOriginName())
+                            .uuidName(image.getUuidName())
+                            .type(image.getType())
+                            .url(image.getUrl())
+                            .uploadDate(image.getUploadDate())
+                            .build()
+            );
+        }
+        return imageResponseDtos;
+    }
 }

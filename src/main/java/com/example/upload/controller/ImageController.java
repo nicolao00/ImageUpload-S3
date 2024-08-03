@@ -64,4 +64,11 @@ public class ImageController {
         map.put("uuid_name", imageServiceS3.uploadImage(fileList, userName));
         return new ResponseDto(map);
     }
+
+    @GetMapping("/user/{userName}")
+    public ResponseDto<?> getImages(@PathVariable String userName) throws IOException {
+        Map<String, List<ImageResponseDto>> map = new HashMap<>();
+        map.put("path", imageServiceS3.getImageList(userName));
+        return new ResponseDto<>(map);
+    }
 }
