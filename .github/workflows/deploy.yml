@@ -17,14 +17,21 @@ jobs:
       - name: SSH(원격 접속)로 EC2에 접속하기
         # (일일히 다 쳐도 되지만) 어떤 라이브러리쓸거냐? https://github.com/marketplace/actions/ssh-remote-commands
         uses: appleboy/ssh-action@v1.0.3
+        ## application.yml 파일 gitignore 해놔서 아래 설정 추가한 것(envs 명령어 라인도 동일) + (환경변수를 쓰고 싶으면 env: OOO: ~ 이렇게 쓰라고 appleboy에 명시되어있음)
+        env:
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
         with:
           host: ${{ secrets.EC2_Host }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          env: APPLICATION_PROPERTIES
           script_stop: true
           script: | # 여러 명령어 쓸땐 이런식으로 쓰라고 공식문서에 나와있음 / 4번째 줄. 돌고 있는 8080 서버가 없으면 에러로 인식돼서 || true 추가
             cd /home/ubuntu/ImageUpload-S3
+            rm -rf src/main/resources/application.yml
             git pull origin main
+            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
             ./gradlew clean build
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+          # 2>&1: 표준 에러를 표준 출력으로 리다이렉트합니다. 즉, 모든 출력(표준 출력 및 에러 메시지)을 output.log 파일에 기록합니다.
