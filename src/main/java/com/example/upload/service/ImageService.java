@@ -4,6 +4,7 @@ package com.example.upload.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.upload.domain.Image;
 import com.example.upload.domain.type.ErrorCode;
+import com.example.upload.dto.response.ImageResponseDto;
 import com.example.upload.exception.RestApiException;
 import com.example.upload.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -29,7 +32,7 @@ public class ImageService {
 
 
     @Transactional()
-    public String uploadImage(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file, String userName) throws IOException {
         // File Path Fetch
         String uuidImageName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         String filePath = FOLDER_PATH + uuidImageName;
@@ -38,7 +41,7 @@ public class ImageService {
         try {
             file.transferTo(new File(filePath));
         } catch (Exception e) {
-//            throw new RestApiException(ErrorCode.FILE_UPLOAD);
+            throw new RestApiException(ErrorCode.FILE_UPLOAD);
         }
 
         // Path DB Save
@@ -66,12 +69,35 @@ public class ImageService {
 //        findImage.updateImage(file.getOriginalFilename(), uuidImageName, filePath, file.getContentType());
         imageRepository.save(
                 Image.builder()
+                        .owner(userName)
                         .originName(file.getOriginalFilename())
                         .uuidName(uuidImageName)
+                        .url(filePath)
                         .type(file.getContentType())
                         .build()
         );
         return uuidImageName;
+    }
+
+    @Transactional
+    public List<ImageResponseDto> getImageList(String userName) throws IOException {
+        List<Image> userImages = imageRepository.findAllByOwner(userName).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        List<ImageResponseDto> imageResponseDtos = new ArrayList<>();
+
+        for (Image image : userImages) {
+            imageResponseDtos.add(
+                    ImageResponseDto.builder()
+                            .id(image.getId())
+                            .owner(image.getOwner())
+                            .originName(image.getOriginName())
+                            .uuidName(image.getUuidName())
+                            .type(image.getType())
+                            .url(image.getUrl())
+                            .uploadDate(image.getUploadDate())
+                            .build()
+            );
+        }
+        return imageResponseDtos;
     }
 
     @Transactional()

@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     NOT_FOUND("404", HttpStatus.NOT_FOUND, "Not Exist"),
     NOT_END_POINT("400", HttpStatus.BAD_REQUEST, "Not Exist End Point Error"),
+    FILE_UPLOAD("5001", HttpStatus.INTERNAL_SERVER_ERROR, "File Upload Failed"),
     SERVER_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+
 
     private final String code;
     private final HttpStatus httpStatus;

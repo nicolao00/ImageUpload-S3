@@ -44,36 +44,43 @@ public class ImageController {
 //                    .body(imageData);
 //    }
 
-    // 로컬 저장소에 사진 저장하는 로직
-//    @PostMapping("/user")
-//    public ResponseDto<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-//        Map<String, String> map = new HashMap<>();
-//        map.put("uuid_name", imageService.uploadImage(file));
-//        return new ResponseDto(map);
-//    }
-
-//    @DeleteMapping("/user/{originName}")
-//    public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
-//        return new ResponseDto<Boolean>(imageService.deleteImage(originName));
-//    }
-
-    // S3에 사진 저장하는 로직
+     //로컬 저장소에 사진 저장하는 로직
     @PostMapping("/user")
-    public ResponseDto<?> uploadImage(@RequestParam("image") List<MultipartFile> fileList, @RequestParam("user") String userName) throws IOException {
-        Map<String, List<String>> map = new HashMap<>();
-        map.put("uuid_name", imageServiceS3.uploadImage(fileList, userName));
+    public ResponseDto<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("user") String userName) throws IOException {
+        Map<String, String> map = new HashMap<>();
+        map.put("uuid_name", imageService.uploadImage(file, userName));
         return new ResponseDto(map);
     }
 
     @GetMapping("/user/{userName}")
     public ResponseDto<?> getImages(@PathVariable String userName) throws IOException {
         Map<String, List<ImageResponseDto>> map = new HashMap<>();
-        map.put("path", imageServiceS3.getImageList(userName));
+        map.put("path", imageService.getImageList(userName));
         return new ResponseDto<>(map);
     }
 
-    @DeleteMapping("/user/{uuidName}")
-    public ResponseDto<Boolean> deleteImage(@PathVariable String uuidName) throws IOException {
-        return new ResponseDto<Boolean>(imageServiceS3.deleteImage(uuidName));
+    @DeleteMapping("/user/{originName}")
+    public ResponseDto<Boolean> deleteImage(@PathVariable String originName) throws IOException {
+        return new ResponseDto<Boolean>(imageService.deleteImage(originName));
     }
+
+//    // S3에 사진 저장하는 로직
+//    @PostMapping("/user")
+//    public ResponseDto<?> uploadImage(@RequestParam("image") List<MultipartFile> fileList, @RequestParam("user") String userName) throws IOException {
+//        Map<String, List<String>> map = new HashMap<>();
+//        map.put("uuid_name", imageServiceS3.uploadImage(fileList, userName));
+//        return new ResponseDto(map);
+//    }
+//
+//    @GetMapping("/user/{userName}")
+//    public ResponseDto<?> getImages(@PathVariable String userName) throws IOException {
+//        Map<String, List<ImageResponseDto>> map = new HashMap<>();
+//        map.put("path", imageServiceS3.getImageList(userName));
+//        return new ResponseDto<>(map);
+//    }
+//
+//    @DeleteMapping("/user/{uuidName}")
+//    public ResponseDto<Boolean> deleteImage(@PathVariable String uuidName) throws IOException {
+//        return new ResponseDto<Boolean>(imageServiceS3.deleteImage(uuidName));
+//    }
 }
