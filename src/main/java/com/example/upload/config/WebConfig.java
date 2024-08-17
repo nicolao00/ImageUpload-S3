@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "https://d3unbot65tvt0x.cloudfront.net") // 허용할 출처 (로컬 리액트와 빌드된 리액트 파일이 담긴 Cloudfront 주소)
+                .allowedOrigins("http://localhost:3000", "https://uploader-front.p-e.kr") // 허용할 출처 (로컬 리액트와 빌드된 리액트 파일이 담긴 Cloudfront 주소 <- 이때 도메인 주소 적어야함! 별칭 적으면 안됨!)
                 .allowedMethods("GET", "POST", "DELETE", "HEAD") // 허용할 HTTP method
                 .allowCredentials(true) // 쿠키 인증 요청 허용
                 .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
