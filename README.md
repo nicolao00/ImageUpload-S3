@@ -2,6 +2,10 @@
 
 이 프로젝트는 React 빌드파일과 이미지를 각각의 AWS S3와 CloudFront에 저장 및 배포하고 캐싱하여 가져오는 기능을 포함합니다. 또한, CI/CD 파이프라인을 구현하여 자동 배포를 연습합니다. 주요 기능으로는 이미지 업로드, 조회, 삭제가 있으며, AWS 서비스를 활용한 배포와 관리가 포함됩니다.
 
+## 📷 시연영상
+<p align="center">
+  <img src = "https://github.com/user-attachments/assets/1be53404-708a-4895-a479-fe0c9982921a">
+</p>
 
 ## 🛠️ 기능
 
